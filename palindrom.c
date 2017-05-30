@@ -63,8 +63,8 @@ int palindrom(char* string)
 int takethesentence(char* filename)
 {
 	char cymbol;
+	int flag = 0;
 	
-
 	FILE *TEXT;
 
 	TEXT = fopen(filename, "r");
@@ -75,7 +75,7 @@ int takethesentence(char* filename)
 		return 1;
 	}
 	
-	while(feof(TEXT) != 0)
+	while(1)
 	{
 		int i = 0;
 		size_t capofsentence = 0;
@@ -89,12 +89,23 @@ int takethesentence(char* filename)
 		
 		while((cymbol = fgetc(TEXT)) != '.')
 		{
+			if(feof(TEXT))
+			{
+				if(flag == 0)
+				{	
+					printf("Couldn't find palindroms in file %s", filename);
+				}
+				
+				return 0;
+			}
+
 			if(i > capofsentence)
 			{
 				capofsentence+=1;
 				sentence = realloc(sentence, (capofsentence + 1) * sizeof(char));
 
 			}
+
 			sentence[i] = cymbol;
 			i++;
 		}
@@ -103,6 +114,7 @@ int takethesentence(char* filename)
 		if (palindrom(sentence) == 1)
 		{
 			printf("\n%s", sentence);
+			flag++;
 		}
 	}	
 
@@ -136,6 +148,7 @@ int main(int argc, char *argv[])
 
 	redactfile(filename);
 
+	printf("\nPalindroms in file: \n");
 	takethesentence(filename);
 	
 	return 0;
